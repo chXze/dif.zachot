@@ -1,0 +1,108 @@
+using System;
+using System.IO;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Гамесы
+
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            char[,] map = RideMap("map.txt");
+            int x = 1;
+            int y = 8;
+
+
+            while (true)
+            {
+                Console.Clear();
+                DrowMap(map);
+
+                //map[x,y] = '웃'
+                Console.SetCursorPosition(x, y);
+                Console.Write('웃');
+
+                ControlPlayer(ref x, ref y, map);
+            }
+        }
+
+        private static void ControlPlayer(ref int horizontal, ref int vertical, char[,] map)
+        {
+            const ConsoleKey CommandMoveUp = ConsoleKey.W;
+            const ConsoleKey CommandMoveDown = ConsoleKey.S;
+            const ConsoleKey CommandMoveRight = ConsoleKey.D;
+            const ConsoleKey CommandMoveLeft = ConsoleKey.A;
+
+            int oldPositionX = horizontal;
+            int oldPositionY = vertical;
+            char wall = '#';
+            ConsoleKey userKey;
+            userKey = Console.ReadKey(true).Key;
+
+            switch (userKey)
+            {
+                case CommandMoveUp:
+                    vertical--;
+                    break;
+                case CommandMoveDown:
+                    vertical++;
+                    break;
+                case CommandMoveRight:
+                    horizontal++;
+                    break;
+                case CommandMoveLeft:
+                    horizontal--;
+                    break;
+            }
+
+            if (map[vertical, horizontal] == wall)
+            {
+                horizontal = oldPositionX;
+                vertical = oldPositionY;
+            }
+
+
+        }
+
+        private static char[,] RideMap(string path)
+        {
+            string[] file = File.ReadAllLines(path);
+
+            char[,] map = new char[GetMaxLenghtheOfline(file), file.Length];
+
+            for (int x = 0; x < map.GetLength(0); x++)
+                for (int y = 0; y < map.GetLength(1); y++)
+                    map[x, y] = file[y][x];
+
+            return map;
+
+        }
+
+        private static void DrowMap(char[,] map)
+        {
+            for (int y = 0; y < map.GetLength(1); y++)
+            {
+                for (int x = 0; x < map.GetLength(0); x++)
+                    Console.Write(map[x, y]);
+
+                Console.WriteLine();
+            }
+        }
+
+        private static int GetMaxLenghtheOfline(string[] lines)
+        {
+            int maxLengt = lines[0].Length;
+            foreach (var line in lines)
+                if (line.Length > maxLengt)
+                    maxLengt = line.Length;
+
+            return maxLengt;
+        }
+
+    }
+
+}
